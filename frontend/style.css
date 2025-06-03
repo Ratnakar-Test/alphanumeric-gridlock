@@ -5,11 +5,10 @@
     grid-template-columns: repeat(6, 50px);
     grid-template-rows: repeat(6, 50px);
     position: relative;
-    /* Add a subtle background to the grid itself to help define its area if cells are light */
-    background-color: hsl(var(--b2, #f0f0f0)); /* daisyUI base-200 */
-    /* Add an outer border to the entire grid for clarity */
-    border: 2px solid hsl(var(--bc)/0.5, #888888); /* Base content color at 50% opacity, or a mid-gray */
-    gap: 1px; /* Add a small gap back, filled by the #game-grid background, to help delineate cells */
+    /* Outer border for the entire grid - ensures its boundary is clear */
+    border: 2px solid hsl(var(--bc)/0.6, #777777); /* Base content color at 60% opacity, or a noticeable gray */
+    /* `gap` is removed; cell borders will define the lines */
+    /* `background-color` for #game-grid is removed as it's not needed for gaps anymore */
 }
 
 .grid-cell {
@@ -24,35 +23,37 @@
     position: relative;
     padding: 2px;
 
-    /* Explicitly set background and text color for standard cells using daisyUI variables */
-    background-color: hsl(var(--b1, #ffffff)); /* Base-100 (e.g., white in light theme) */
-    color: hsl(var(--bc, #333333));      /* Base-content text color */
+    background-color: hsl(var(--b1, #ffffff)); /* Cell background (e.g., white in light theme) */
+    color: hsl(var(--bc, #333333));      /* Cell text color */
 
-    /* Default border for cells - this will be for lines *inside* cages if not overridden by JS.
-       The `gap` in #game-grid will provide main cell separation.
-       If a cell border is overridden by JS (e.g., '2px solid black' for cage edge), that will take precedence.
-       If no gap is used, this border would be key. With gap, this can be minimal or none.
-       Let's remove individual default borders if gap is used, to avoid double lines.
-    */
-    /* border: 1px solid hsl(var(--b3, #dddddd)); */ /* Removing this if gap is used effectively */
+    /* --- THIS IS THE KEY CHANGE FOR DEFAULT GRID LINES --- */
+    /* Add a default border to all sides of each cell.
+       This will create the standard grid lines.
+       Cage borders (2px solid black from JS) will override this on specific edges. */
+    border: 1px solid hsl(var(--b3, #cccccc)); /* daisyUI base-300 or a visible light gray */
 }
 
-/* Focus style for editable cells - using daisyUI primary color for outline */
+/* Focus style for editable cells */
 .grid-cell[contentEditable="true"]:focus {
-    outline: 2px solid hsl(var(--p, dodgerblue)); /* --p is primary color in daisyUI */
+    outline: 2px solid hsl(var(--p, dodgerblue));
     outline-offset: 0px;
-    /* Slightly change background on focus to enhance visibility */
-    background-color: hsl(var(--b1)/0.9); /* Lighten or darken base-100 slightly */
+    background-color: hsl(var(--b1)/0.9);
     z-index: 10;
     box-shadow: 0 0 0 3px hsl(var(--p)/.2);
 }
 
 .prefilled-cell {
-    /* Make prefilled cells more distinct from regular cells */
-    background-color: hsl(var(--b3, #e5e5e5)); /* daisyUI base-300 or a noticeable gray */
+    background-color: hsl(var(--b2, #f0f0f0)); /* Use base-200, should be subtly different from base-100 */
     color: hsl(var(--bc));
     font-weight: bold;
 }
+
+/* Ensure prefilled is visibly different from base editable cells if b1 and b2 are too similar in a theme */
+html[data-theme="light"] .prefilled-cell,
+html[data-theme="cupcake"] .prefilled-cell { /* Add other themes if b1 & b2 are too close */
+    background-color: #e9e9f2; /* A slightly more distinct light gray if needed */
+}
+
 
 .grid-cell[contentEditable="false"] {
     cursor: default;
@@ -64,7 +65,6 @@
     left: 2px;
     font-size: 10px;
     font-weight: normal;
-    /* Using a muted version of the base content text color for clues */
     color: hsl(var(--bc)/0.6);
     line-height: 1;
     z-index: 1;
@@ -73,10 +73,8 @@
 
 /* Validation Styles using daisyUI theme colors */
 .cell-invalid {
-    background-color: hsl(var(--er, #ffdddd)) !important; /* Error background */
-    color: hsl(var(--erc, #d8000c)) !important;       /* Error text content */
-    /* Optionally, add an error border to the cell itself */
-    /* border: 1px solid hsl(var(--er, #d8000c)) !important; */
+    background-color: hsl(var(--er, #ffdddd)) !important;
+    color: hsl(var(--erc, #d8000c)) !important;
 }
 
 .cell-invalid:focus {
