@@ -5,9 +5,7 @@
     grid-template-columns: repeat(6, 50px);
     grid-template-rows: repeat(6, 50px);
     position: relative;
-    /* Outer border for the entire grid - ensures its boundary is clear */
-    border: 2px solid hsl(var(--bc)/0.6, #777777); /* Base content color at 60% opacity, or a noticeable gray */
-    /* No gap, cell borders will define all lines */
+    border: 2px solid hsl(var(--bc)/0.6, #777777);
 }
 
 .grid-cell {
@@ -21,46 +19,32 @@
     font-weight: bold;
     position: relative;
     padding: 2px;
-
-    background-color: hsl(var(--b1, #ffffff)); /* Cell background (e.g., white in light theme) */
-    color: hsl(var(--bc, #333333));      /* Cell text color */
-
-    /* --- ADJUSTED DEFAULT BORDER FOR VISIBILITY --- */
-    /* This border applies to all sides of every cell by default.
-       Cage borders (2px solid black from JS) will override this on specific edges.
-       Using a more visible shade for default grid lines.
-       hsl(var(--bc)/0.2) means base content color at 20% opacity.
-       Or a specific gray like #B0B0B0 or #A9A9A9 (DarkGray).
-    */
-    border: 1px solid hsl(var(--bc)/0.25,#000000); /* BaseContent at 25% opacity, or medium-light gray */
+    background-color: hsl(var(--b1, #ffffff));
+    color: hsl(var(--bc, #333333));
+    border: 1px solid hsl(var(--bc)/0.25, #b0b0b0);
 }
 
-/* Focus style for editable cells */
 .grid-cell[contentEditable="true"]:focus {
     outline: 2px solid hsl(var(--p, dodgerblue));
-    outline-offset: 2px;
-    /* Keep background distinct or consistent on focus */
-    background-color: hsl(var(--b1)/0.95); /* Slightly adjust base-100 on focus */
+    outline-offset: 0px;
+    background-color: hsl(var(--b1)/0.95);
     z-index: 10;
     box-shadow: 0 0 0 3px hsl(var(--p)/.2);
 }
 
 .prefilled-cell {
-    /* Using daisyUI base-200, which should be subtly different from base-100 */
     background-color: hsl(var(--b2, #f0f0f0));
     color: hsl(var(--bc));
     font-weight: bold;
 }
 
-/* Example override for themes where b1 and b2 might be too similar */
 html[data-theme="light"] .prefilled-cell,
 html[data-theme="cupcake"] .prefilled-cell {
-    background-color: #f3f4f6; /* A common light gray like Tailwind's gray-100 */
+    background-color: #f3f4f6;
 }
 html[data-theme="dark"] .prefilled-cell {
-    background-color: hsl(var(--b2)/0.8); /* Make it a bit more distinct in dark themes if needed */
+    background-color: hsl(var(--b2)/0.8);
 }
-
 
 .grid-cell[contentEditable="false"] {
     cursor: default;
@@ -78,7 +62,7 @@ html[data-theme="dark"] .prefilled-cell {
     user-select: none;
 }
 
-/* Validation Styles using daisyUI theme colors */
+/* Sudoku/Number Validation Styles */
 .cell-invalid {
     background-color: hsl(var(--er, #ffdddd)) !important;
     color: hsl(var(--erc, #d8000c)) !important;
@@ -89,6 +73,7 @@ html[data-theme="dark"] .prefilled-cell {
     box-shadow: 0 0 0 3px hsl(var(--er)/.2);
 }
 
+/* Cage Validation Styles */
 .cage-clue-error {
     color: hsl(var(--er, #d8000c)) !important;
     font-weight: bold;
@@ -97,4 +82,18 @@ html[data-theme="dark"] .prefilled-cell {
 .cage-clue-correct {
     color: hsl(var(--su, #2c9a2c)) !important;
     font-weight: bold;
+}
+
+/* Word Validation Styles */
+.cell-word-error {
+    /* Example: subtle underline or text color change for invalid words */
+    /* Ensure this doesn't clash too much with .cell-invalid if they can co-occur */
+    text-decoration: underline wavy hsl(var(--wa, #ffc107)) 2px; /* DaisyUI 'warning' color for wavy line */
+    /* Or a different background tint */
+    /* background-color: hsl(var(--wa)/0.1) !important; */
+}
+
+.cell-word-correct { /* Optional: if you want to highlight correct words */
+    /* Example: subtle text color change for correctly formed words */
+    /* color: hsl(var(--su, #2c9a2c)); */
 }
