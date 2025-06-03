@@ -15,38 +15,71 @@ body {
     display: grid;
     grid-template-columns: repeat(6, 50px); /* 6 columns, each 50px wide */
     grid-template-rows: repeat(6, 50px);    /* 6 rows, each 50px high */
-    border: 2px solid #333; /* Border around the whole grid */
-    gap: 1px; /* A small gap between cells, makes them distinct */
-    background-color: #bbb; /* Color for the gaps */
+    /* The main border is removed here, cages will define borders */
+    /* border: 2px solid #333;  */
+    /* gap: 1px; */ /* Gap removed, borders will define separation */
+    /* background-color: #bbb; */
+    position: relative; /* For absolute positioning of clues if needed */
 }
 
 .grid-cell {
     width: 50px;
     height: 50px;
-    background-color: #fff; /* White background for cells */
-    border: 1px solid #ccc; /* Light border for each cell */
-    box-sizing: border-box; /* Ensures padding/border don't increase total size */
+    background-color: #fff;
+    /* Default thin border, will be overridden by cage borders */
+    border: 1px solid #eee; /* Very light border for non-cage lines */
+    box-sizing: border-box;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    /* justify-content: center; */ /* Changed for clue positioning */
+    /* align-items: center; */    /* Changed for clue positioning */
     font-size: 20px;
     font-weight: bold;
-    color: #333; /* Default text color for editable cells */
+    color: #333;
+    position: relative; /* Each cell is a positioning context for its clue */
+    padding: 2px; /* Small padding for content */
 }
 
 .grid-cell:focus {
     outline: 2px solid dodgerblue;
-    background-color: #e6f3ff; /* A light blue to indicate focus */
+    background-color: #e6f3ff;
     box-shadow: 0 0 5px rgba(0, 116, 217, 0.5);
+    z-index: 10; /* Ensure focused cell content is on top */
 }
 
 .prefilled-cell {
-    background-color: #e9e9e9; /* Slightly different background for pre-filled cells */
-    color: #000; /* Darker text for pre-filled cells */
-    font-weight: bold; /* Ensure pre-filled are also bold */
+    background-color: #e9e9e9;
+    color: #000;
+    font-weight: bold;
 }
 
-/* Ensure that contentEditable=false cells don't show a text cursor if somehow focused */
 .grid-cell[contentEditable="false"] {
     cursor: default;
+}
+
+.cage-clue {
+    position: absolute;
+    top: 1px;
+    left: 2px;
+    font-size: 10px; /* Smaller font for the clue */
+    font-weight: normal; /* Normal weight for clue */
+    color: #555;
+    line-height: 1;
+    z-index: 1; /* Clue is behind main content if cell is filled */
+}
+
+/* The main value of the cell (number/letter) */
+/* We will rely on the text node itself, positioned by flexbox on cell if needed */
+/* Text content of cell (value) should appear normally. Clue is absolutely positioned. */
+/* Adjust display flex for cell if value needs centering with clue present */
+.grid-cell {
+    /* Re-adding flex for centering main value if clue is present */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.prefilled-cell .cage-clue { /* Ensure clue is visible with prefilled value */
+    z-index: 1;
+}
+.prefilled-cell > *:not(.cage-clue) { /* Prefilled text node */
+    z-index: 0;
 }
