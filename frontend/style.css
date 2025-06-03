@@ -7,8 +7,7 @@
     position: relative;
     /* Outer border for the entire grid - ensures its boundary is clear */
     border: 2px solid hsl(var(--bc)/0.6, #777777); /* Base content color at 60% opacity, or a noticeable gray */
-    /* `gap` is removed; cell borders will define the lines */
-    /* `background-color` for #game-grid is removed as it's not needed for gaps anymore */
+    /* No gap, cell borders will define all lines */
 }
 
 .grid-cell {
@@ -26,32 +25,40 @@
     background-color: hsl(var(--b1, #ffffff)); /* Cell background (e.g., white in light theme) */
     color: hsl(var(--bc, #333333));      /* Cell text color */
 
-    /* --- THIS IS THE KEY CHANGE FOR DEFAULT GRID LINES --- */
-    /* Add a default border to all sides of each cell.
-       This will create the standard grid lines.
-       Cage borders (2px solid black from JS) will override this on specific edges. */
-    border: 1px solid hsl(var(--b3, #cccccc)); /* daisyUI base-300 or a visible light gray */
+    /* --- ADJUSTED DEFAULT BORDER FOR VISIBILITY --- */
+    /* This border applies to all sides of every cell by default.
+       Cage borders (2px solid black from JS) will override this on specific edges.
+       Using a more visible shade for default grid lines.
+       hsl(var(--bc)/0.2) means base content color at 20% opacity.
+       Or a specific gray like #B0B0B0 or #A9A9A9 (DarkGray).
+    */
+    border: 1px solid hsl(var(--bc)/0.25, #b0b0b0); /* BaseContent at 25% opacity, or medium-light gray */
 }
 
 /* Focus style for editable cells */
 .grid-cell[contentEditable="true"]:focus {
     outline: 2px solid hsl(var(--p, dodgerblue));
     outline-offset: 0px;
-    background-color: hsl(var(--b1)/0.9);
+    /* Keep background distinct or consistent on focus */
+    background-color: hsl(var(--b1)/0.95); /* Slightly adjust base-100 on focus */
     z-index: 10;
     box-shadow: 0 0 0 3px hsl(var(--p)/.2);
 }
 
 .prefilled-cell {
-    background-color: hsl(var(--b2, #f0f0f0)); /* Use base-200, should be subtly different from base-100 */
+    /* Using daisyUI base-200, which should be subtly different from base-100 */
+    background-color: hsl(var(--b2, #f0f0f0));
     color: hsl(var(--bc));
     font-weight: bold;
 }
 
-/* Ensure prefilled is visibly different from base editable cells if b1 and b2 are too similar in a theme */
+/* Example override for themes where b1 and b2 might be too similar */
 html[data-theme="light"] .prefilled-cell,
-html[data-theme="cupcake"] .prefilled-cell { /* Add other themes if b1 & b2 are too close */
-    background-color: #e9e9f2; /* A slightly more distinct light gray if needed */
+html[data-theme="cupcake"] .prefilled-cell {
+    background-color: #f3f4f6; /* A common light gray like Tailwind's gray-100 */
+}
+html[data-theme="dark"] .prefilled-cell {
+    background-color: hsl(var(--b2)/0.8); /* Make it a bit more distinct in dark themes if needed */
 }
 
 
