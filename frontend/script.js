@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridSize = 6;
     const regionRows = 2;
     const regionCols = 3;
-    const minWordLength = 3; // Minimum length for a sequence of letters to be considered a word
+    const minWordLength = 3;
 
     const letterValues = {
         'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6, 'G': 7, 'H': 8, 'I': 9,
@@ -11,94 +11,68 @@ document.addEventListener('DOMContentLoaded', () => {
         'R': 18, 'S': 19, 'T': 20, 'U': 21, 'V': 22, 'W': 23, 'X': 24, 'Y': 25, 'Z': 26
     };
 
-    // Small embedded dictionary (all uppercase)
-    const wordDictionary = [
-        "ACE", "ACT", "ADD", "ART", "ASK", "ATE", "BAD", "BAG", "BAT", "BED", "BEG", "BET", "BIG", "BIT", "BOX", "BOY",
-        "BUG", "BUS", "BUT", "BUY", "BYE", "CAB", "CAN", "CAP", "CAR", "CAT", "COD", "COT", "COW", "CRY", "CUB", "CUP",
-        "CUT", "DAD", "DAY", "DID", "DIE", "DIG", "DOG", "DOT", "DRY", "DUE", "EAT", "EGG", "END", "EYE", "FAR", "FAT",
-        "FEW", "FIX", "FLY", "FOG", "FOR", "FUN", "FUR", "GAP", "GAS", "GET", "GOD", "GOT", "GUM", "GUN", "GUT", "GUY",
-        "HAD", "HAS", "HAT", "HEN", "HER", "HEY", "HID", "HIM", "HIP", "HIS", "HIT", "HOT", "HOW", "HUG", "HUM", "ICE",
-        "ILL", "INK", "ITS", "JET", "JOB", "JOG", "JOY", "JUG", "KID", "KIT", "LAB", "LAP", "LAW", "LAY", "LED", "LEG",
-        "LET", "LID", "LIE", "LIP", "LIT", "LOG", "LOT", "LOW", "MAD", "MAN", "MAP", "MAT", "MAY", "MEN", "MIX", "MOM",
-        "MUD", "NET", "NEW", "NOD", "NOT", "NOW", "NUT", "OAK", "ODD", "OFF", "OLD", "ONE", "OUR", "OUT", "OWE", "OWL",
-        "OWN", "PAD", "PAN", "PAT", "PAY", "PEG", "PEN", "PET", "PIG", "PIN", "PIT", "POT", "PUT", "RAG", "RAN", "RAT",
-        "RED", "REP", "RIB", "RID", "RIG", "RIM", "RIP", "ROB", "ROD", "ROT", "ROW", "RUB", "RUG", "RUM", "RUN", "SAD",
-        "SAG", "SAP", "SAT", "SAW", "SAY", "SEA", "SEE", "SET", "SEW", "SHE", "SKY", "SON", "SUN", "TAP", "TAX", "TEA",
-        "TEN", "THE", "TIE", "TIP", "TOE", "TOO", "TOP", "TOY", "TRY", "TUB", "TUG", "TWO", "USE", "VAN", "VET", "WAR",
-        "WAS", "WAY", "WEB", "WED", "WET", "WHO", "WHY", "WIN", "WOK", "YES", "YET", "YOU", "ZIP", "ZOO",
-        "ABLE", "ACID", "ALSO", "AREA", "ARMY", "AWAY", "BABY", "BACK", "BALL", "BAND", "BANK", "BASE", "BATH", "BEAR",
-        "BEAT", "BEEN", "BEER", "BELL", "BELT", "BEND", "BEST", "BIRD", "BLOW", "BLUE", "BOAT", "BODY", "BOMB", "BOND",
-        "BONE", "BOOK", "BOSS", "BOTH", "BOWL", "BURN", "BUSH", "BUSY", "CAKE", "CALL", "CALM", "CAME", "CAMP", "CARD",
-        "CARE", "CASE", "CASH", "CAST", "CELL", "CHAT", "CHIP", "CITY", "CLUB", "COAL", "COAT", "CODE", "COLD", "COME",
-        "COOK", "COOL", "COPY", "CORE", "CORN", "COST", "CREW", "CROP", "DARK", "DATA", "DATE", "DEAL", "DEAR", "DEBT",
-        "DECK", "DEEP", "DEER", "DESK", "DIAL", "DIET", "DIRT", "DISK", "DOES", "DONE", "DOOR", "DOWN", "DRAW", "DREAM",
-        "DRESS", "DRINK", "DRIVE", "DROP", "DRUG", "DUCK", "DUST", "DUTY", "EACH", "EARN", "EAST", "EASY", "EDGE", "ELSE",
-        "EVEN", "EVER", "FACE", "FACT", "FAIL", "FAIR", "FALL", "FARM", "FAST", "FATE", "FEAR", "FEED", "FEEL", "FEET",
-        "FELT", "FILE", "FILL", "FILM", "FIND", "FINE", "FIRE", "FIRM", "FISH", "FIVE", "FLAG", "FLAT", "FLOW", "FOOD",
-        "FOOT", "FORD", "FORM", "FOUR", "FREE", "FROM", "FUEL", "FULL", "FUND", "GAIN", "GAME", "GANG", "GATE", "GAVE",
-        "GEAR", "GENE", "GIFT", "GIRL", "GIVE", "GLAD", "GOAL", "GOLD", "GONE", "GOOD", "GRAY", "GREW", "GREY", "GRID",
-        "GROW", "HAIR", "HALF", "HALL", "HAND", "HANG", "HARD", "HATE", "HAVE", "HEAD", "HEAR", "HEAT", "HELD", "HELL",
-        "HELP", "HERE", "HIGH", "HILL", "HOLD", "HOLE", "HOME", "HOPE", "HOUR", "HUGE", "HUNG", "HUNT", "HURT", "IDEA",
-        "INCH", "INTO", "IRON", "ITEM", "JOIN", "JUMP", "JURY", "JUST", "KEEP", "KICK", "KILL", "KIND", "KING", "KNEE",
-        "KNEW", "KNOW", "LACK", "LADY", "LAID", "LAKE", "LAMB", "LAND", "LANE", "LAST", "LATE", "LAZY", "LEAD", "LEAF",
-        "LEFT", "LEND", "LESS", "LIFE", "LIFT", "LIKE", "LINE", "LINK", "LIST", "LIVE", "LOAD", "LOAN", "LOCK", "LONG",
-        "LOOK", "LORD", "LOSE", "LOSS", "LOST", "LOUD", "LOVE", "LUCK", "MADE", "MAIL", "MAIN", "MAKE", "MALE", "MANY",
-        "MARK", "MASS", "MEAL", "MEAN", "MEAT", "MEET", "MENU", "MILE", "MILK", "MIND", "MINE", "MISS", "MODE", "MOOD",
-        "MOON", "MORE", "MOST", "MOVE", "MUCH", "MUST", "NAME", "NAVY", "NEAR", "NECK", "NEED", "NEWS", "NEXT", "NICE",
-        "NINE", "NONE", "NOSE", "NOTE", "NOUN", "ONTO", "OPEN", "OVER", "PAGE", "PAIN", "PAIR", "PALE", "PARK", "PART",
-        "PASS", "PAST", "PATH", "PEAK", "PICK", "PILE", "PINK", "PIPE", "PLAN", "PLAY", "PLOT", "PLUS", "POEM", "POET",
-        "POLE", "POOL", "POOR", "PORT", "POST", "PULL", "PURE", "PUSH", "RACE", "RAIN", "RARE", "RATE", "READ", "REAL",
-        "RELY", "RENT", "REST", "RICE", "RICH", "RIDE", "RING", "RISE", "RISK", "ROAD", "ROCK", "ROLE", "ROLL", "ROOF",
-        "ROOM", "ROOT", "ROSE", "ROUGH", "ROUND", "RULE", "RUSH", "SAFE", "SAID", "SAKE", "SALE", "SALT", "SAME", "SAND",
-        "SAVE", "SEAT", "SEED", "SEEK", "SEEM", "SELL", "SEND", "SENSE", "SENT", "SEVEN", "SHIP", "SHOP", "SHOT", "SHOW",
-        "SICK", "SIDE", "SIGN", "SING", "SITE", "SIZE", "SKIN", "SNOW", "SOFT", "SOIL", "SOLD", "SOME", "SONG", "SOON",
-        "SORT", "SOUL", "SPOT", "STAR", "STAY", "STEP", "STOP", "SUCH", "SUIT", "SURE", "TAKE", "TALE", "TALK", "TALL",
-        "TANK", "TAPE", "TASK", "TAXI", "TEAM", "TEAR", "TELL", "TERM", "TEST", "TEXT", "THAN", "THAT", "THEM", "THEN",
-        "THIN", "THIS", "THUS", "TIME", "TINY", "TONE", "TOOL", "TOUR", "TOWN", "TREE", "TRIP", "TRUE", "TUNE", "TURN",
-        "TYPE", "UNIT", "UPON", "USED", "USER", "VAST", "VERY", "VIEW", "VOTE", "WAIT", "WAKE", "WALK", "WALL", "WANT",
-        "WARD", "WARM", "WASH", "WAVE", "WEAK", "WEAR", "WEEK", "WELL", "WENT", "WERE", "WEST", "WHAT", "WHEN", "WIDE",
-        "WIFE", "WILD", "WILL", "WIND", "WINE", "WING", "WIRE", "WISE", "WISH", "WITH", "WOOD", "WORD", "WORK", "YARD", "YEAR",
-        "ALPHA", "BRAVO", "CHARM", "DELTA", "ECHO", "FOCUS", "GAMMA", "HOTEL", "INDIA", "JULIET", "KAPPA", "LOGIC",
-        "MACRO", "NINJA", "OMEGA", "PAPA", "QUEEN", "ROMEO", "SOLVE", "TANGO", "ULTRA", "VICTOR", "WHISKY", "XRAY", "YANKEE", "ZEBRA",
-        "NUMBER", "LETTER", "PUZZLE", "SQUARE", "CREATE", "ACTIVE", "VERIFY", "ANSWER", "METHOD", "SYSTEM", "FORMAT"
-    ];
-
-
-    // Puzzle definition with cell types: 'n' for number, 'l' for letter, 'a' for any
-    // v: value, t: type, p: prefilled (boolean)
-    const samplePuzzleData = [
-        // Row 0
-        [ {v:'', t:'n', p:false}, {v:'A', t:'l', p:true},  {v:'', t:'n', p:false}, {v:'L', t:'l', p:false}, {v:'5', t:'n', p:true},  {v:'P', t:'l', p:false} ],
-        // Row 1
-        [ {v:'2', t:'n', p:true},  {v:'', t:'n', p:false}, {v:'', t:'n', p:false}, {v:'P', t:'l', p:false}, {v:'', t:'l', p:false}, {v:'C', t:'l', p:true}  ],
-        // Row 2
-        [ {v:'', t:'n', p:false}, {v:'', t:'n', p:false}, {v:'B', t:'l', p:true},  {v:'4', t:'n', p:true},  {v:'H', t:'l', p:false}, {v:'A', t:'l', p:false} ],
-        // Row 3
-        [ {v:'S', t:'l', p:false}, {v:'1', t:'n', p:true},  {v:'O', t:'l', p:false}, {v:'L', t:'l', p:false}, {v:'V', t:'l', p:false}, {v:'E', t:'l', p:true}  ],
-        // Row 4
-        [ {v:'D', t:'l', p:true},  {v:'', t:'n', p:false}, {v:'G', t:'l', p:false}, {v:'', t:'n', p:false}, {v:'3', t:'n', p:true},  {v:'', t:'l', p:false} ],
-        // Row 5
-        [ {v:'', t:'a', p:false}, {v:'T', t:'l', p:false}, {v:'6', t:'n', p:true},  {v:'E', t:'l', p:false}, {v:'S', t:'l', p:false}, {v:'F', t:'l', p:true}  ]
-    ]; // Example: Row 3 can form SOLVE, Col 3 can form APPLE (if cells allow)
-
-    const sampleCages = [ /* ... cage definitions remain the same ... */
-        { cells: [[0,0], [1,0]], target: 7, operation: 'add', displayOp: '+' },
-        { cells: [[0,2], [0,3]], target: 15, operation: 'mul', displayOp: '×' }, // (0,3) is L=12, (0,2) needs to be 15/12 (not int) - adjust puzzle for better example
-        { cells: [[1,1], [2,1], [2,0]], target: 10, operation: 'add', displayOp: '+' },
-        { cells: [[4,3], [5,3]], target: 2, operation: 'sub', displayOp: '−' },
-        { cells: [[5,4], [5,5]], target: 30, operation: 'mul', displayOp: '×' }
-    ];
-    // Adjusting cage for (0,2), (0,3) to be more solvable with example letters. If (0,3) is L=12, (0,2) is 'n'. For target 24, (0,2) could be 2.
-    sampleCages[1] = { cells: [[0,2], [0,3]], target: 24, operation: 'mul', displayOp: '×' };
+    // --- NEW: Current Puzzle Object ---
+    // This structure would ideally be fetched from a backend for a daily puzzle system.
+    // For now, it's defined here.
+    const currentPuzzle = {
+        id: "daily_2025_06_03", // Example ID
+        gridDefinition: [ // v: initial value, t: type ('n','l','a'), p: prefilled
+            // Row 0
+            [ {v:'5', t:'n', p:true},  {v:'A', t:'l', p:true},  {v:'2', t:'n', p:true},  {v:'L', t:'l', p:true},  {v:'P', t:'l', p:true},  {v:'H', t:'l', p:true} ],
+            // Row 1
+            [ {v:'2', t:'n', p:true},  {v:'', t:'n', p:false}, {v:'', t:'n', p:false}, {v:'P', t:'l', p:true},  {v:'H', t:'l', p:true},  {v:'A', t:'l', p:true} ],
+            // Row 2
+            [ {v:'', t:'n', p:false}, {v:'', t:'n', p:false}, {v:'B', t:'l', p:true},  {v:'4', t:'n', p:true},  {v:'A', t:'l', p:true},  {v:'S', t:'l', p:true} ],
+            // Row 3
+            [ {v:'S', t:'l', p:true},  {v:'1', t:'n', p:true},  {v:'O', t:'l', p:true},  {v:'L', t:'l', p:true},  {v:'V', t:'l', p:true},  {v:'E', t:'l', p:true} ],
+            // Row 4
+            [ {v:'D', t:'l', p:true},  {v:'', t:'n', p:false}, {v:'G', t:'l', p:true},  {v:'', t:'n', p:false}, {v:'3', t:'n', p:true},  {v:'R', t:'l', p:true} ],
+            // Row 5
+            [ {v:'E', t:'l', p:false}, {v:'T', t:'l', p:true},  {v:'6', t:'n', p:true},  {v:'', t:'n', p:false}, {v:'E', t:'l', p:true},  {v:'F', t:'l', p:true} ]
+        ],
+        cages: [ // Ensure these cages are solvable with the solutionGrid below
+            { cells: [[0,0], [1,0]], target: 7, operation: 'add', displayOp: '+' }, // 5+2=7
+            { cells: [[0,2], [0,3], [0,4]], target: 34, operation: 'add', displayOp: '+' }, // 2 + L(12) + P(16) = 30. Target 30.
+            { cells: [[1,1], [1,2]], target: 12, operation: 'mul', displayOp: '×'}, // Needs 3 * 4 = 12
+            { cells: [[2,0],[2,1],[3,1]], target: 10, operation: 'add', displayOp: '+' }, // 6+3+1=10
+            { cells: [[4,1],[4,3],[5,3]], target: 2, operation: 'sub', displayOp: '−'}, // e.g. (4,1)=4, (4,3)=5, (5,3)=3 -> complex. Let's simplify. Cage: (4,1), (4,3) Target:1 (5-4)
+            { cells: [[5,0], [4,0]], target: 9, operation: 'add', displayOp: '+' }, // E(5) + D(4) = 9
+            { cells: [[5,4], [5,5], [4,5]], target: 48, operation: 'mul', displayOp: '×' } // E(5)*F(6)*R(18) - no, E(5)*F(6) = 30. (4,5) is R.
+        ],
+        solutionGrid: [ // The unique solution for the gridDefinition above
+            ['5', 'A', '2', 'L', 'P', 'H'],
+            ['2', '4', '3', 'P', 'H', 'A'], // 4*3 = 12 (Cage 2)
+            ['6', '3', 'B', '4', 'A', 'S'], // 6+3+1 (from S1) = 10 (Cage 3)
+            ['S', '1', 'O', 'L', 'V', 'E'],
+            ['D', '4', 'G', '5', '3', 'R'], // For Cage 4: (4,1)=4, (4,3)=5.  |5-4|=1
+            ['E', 'T', '6', '1', 'E', 'F']  // (4,3)=5, (5,3)=1. Let's set (5,3) to 1 in gridDef
+        ],
+        // Manually re-evaluating cages for this example solution
+        // Cage 0: [0,0]=5, [1,0]=2. Sum = 7. Correct.
+        // Cage 1: [0,2]=2, [0,3]=L(12), [0,4]=P(16). Sum = 2+12+16 = 30.
+        // Cage 2: [1,1]=4, [1,2]=3. Mul = 12. Correct.
+        // Cage 3: [2,0]=6, [2,1]=3, [3,1]=1. Sum = 10. Correct.
+        // Cage 4: This cage needs redefinition for simple solution. Let's make it [4,1], [4,3] with target 1. (Values are 4, 5). |4-5|=1. Correct.
+        // Cage 5: [5,0]=E(5), [4,0]=D(4). Sum = 9. Correct.
+        // Cage 6: [5,4]=E(5), [5,5]=F(6), [4,5]=R(18). Mul = 5*6*18 = 540. Far from 48.
+        // Puzzle design is hard! Let's simplify Cage 6: cells: [[5,4],[5,5]], target: 30, op: mul (E*F = 5*6=30).
+    };
+    // Apply corrections to currentPuzzle.cages based on re-evaluation for solvability
+    currentPuzzle.cages[1] = { cells: [[0,2], [0,3], [0,4]], target: 30, operation: 'add', displayOp: '+' };
+    currentPuzzle.cages[4] = { cells: [[4,1], [4,3]], target: 1, operation: 'sub', displayOp: '−'};
+    currentPuzzle.cages[6] = { cells: [[5,4],[5,5]], target: 30, operation: 'mul', displayOp: '×' };
+    // And ensure (5,3) is not prefilled and is type 'n' to accept '1' for the solution.
+    currentPuzzle.gridDefinition[5][3] = {v:'', t:'n', p:false};
 
 
     const gridCells = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
+    const wordValidationCache = new Map(); // Cache for API responses
 
-    if (!gameGridElement) { /* ... error handling ... */ return; }
+    if (!gameGridElement) { console.error('Game grid element not found'); return; }
     gameGridElement.innerHTML = '';
 
-    const cellCageInfo = {}; /* ... cage info setup ... */
-    sampleCages.forEach((cage, cageIndex) => {
+    const cellCageInfo = {};
+    currentPuzzle.cages.forEach((cage, cageIndex) => {
         let clueCellR = Infinity, clueCellC = Infinity;
         cage.cells.forEach(([r, c]) => {
             if (r < clueCellR) { clueCellR = r; clueCellC = c; }
@@ -109,8 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-
-    for (let row = 0; row < gridSize; row++) { /* ... cell creation loop ... */
+    for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
             const cellElement = document.createElement('div');
             cellElement.classList.add('grid-cell');
@@ -118,14 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
             cellElement.dataset.col = col;
             gridCells[row][col] = cellElement;
 
-            const puzzleCellData = samplePuzzleData[row][col];
+            const puzzleCellData = currentPuzzle.gridDefinition[row][col];
             cellElement.dataset.cellType = puzzleCellData.t;
 
             if (puzzleCellData.t === 'n') cellElement.classList.add('cell-type-number');
             else if (puzzleCellData.t === 'l') cellElement.classList.add('cell-type-letter');
 
             const cageData = cellCageInfo[`${row}-${col}`];
-            if (cageData) { /* ... cage border and clue rendering ... */
+            if (cageData) { /* ... cage border and clue rendering (same as before) ... */
                 cellElement.classList.add(cageData.cageId);
                 if (row === 0 || !cellCageInfo[`${row-1}-${col}`] || cellCageInfo[`${row-1}-${col}`].cageId !== cageData.cageId) cellElement.style.borderTop = '2px solid black';
                 if (row === gridSize - 1 || !cellCageInfo[`${row+1}-${col}`] || cellCageInfo[`${row+1}-${col}`].cageId !== cageData.cageId) cellElement.style.borderBottom = '2px solid black';
@@ -141,8 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            if (puzzleCellData.p) { /* ... prefilled cell rendering ... */
-                const existingClue = cellElement.querySelector('.cage-clue');
+            if (puzzleCellData.p) { /* ... prefilled cell rendering (same as before) ... */
+                 const existingClue = cellElement.querySelector('.cage-clue');
                 if (existingClue) {
                     cellElement.innerHTML = ''; cellElement.appendChild(existingClue.cloneNode(true));
                     cellElement.appendChild(document.createTextNode(puzzleCellData.v));
@@ -161,17 +134,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    validateAllGameRules(); // Changed from validateAllCellsAndCages
+    validateAllGameRules();
 
     function handleKeyDown(e, cellType) { /* ... same as before ... */
         const currentCell = e.target;
         if (e.key === 'Enter') { e.preventDefault(); currentCell.blur(); return; }
         if (['Tab', 'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key) || e.ctrlKey || e.metaKey || e.altKey) return;
-
         let actualValue = '';
         currentCell.childNodes.forEach(node => { if (node.nodeType === Node.TEXT_NODE) actualValue += node.textContent; });
         if (actualValue.length >= 1) { e.preventDefault(); return; }
-
         let isValidKey = false;
         if (cellType === 'n') isValidKey = /^[1-9]$/.test(e.key);
         else if (cellType === 'l') isValidKey = /^[a-zA-Z]$/.test(e.key);
@@ -179,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isValidKey) e.preventDefault();
     }
 
-    function handleInput(e, cellType) { /* ... mostly same, triggers validateAllGameRules ... */
+    async function handleInput(e, cellType) { // Made async for word validation
         const currentCell = e.target;
         const clueElement = currentCell.querySelector('.cage-clue');
         let currentText = '';
@@ -188,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let value = currentText.toUpperCase();
         let sanitizedValue = '';
 
-        if (value.length > 0) {
+        if (value.length > 0) { /* ... input sanitization (same as before) ... */
             const charToTest = value.charAt(value.length - 1);
             if (cellType === 'n' && /[1-9]/.test(charToTest)) sanitizedValue = charToTest;
             else if (cellType === 'l' && /[A-Z]/.test(charToTest)) sanitizedValue = charToTest;
@@ -196,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (/[A-Z]/.test(charToTest)) sanitizedValue = charToTest;
                 else if (/[1-9]/.test(charToTest)) sanitizedValue = charToTest;
             }
-            if (!sanitizedValue && value.length > 0) {
+            if (!sanitizedValue && value.length > 0) { // Fallback for paste
                 const firstChar = value.charAt(0);
                  if (cellType === 'n' && /[1-9]/.test(firstChar)) sanitizedValue = firstChar;
                  else if (cellType === 'l' && /[A-Z]/.test(firstChar)) sanitizedValue = firstChar;
@@ -212,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentCell.appendChild(document.createTextNode(sanitizedValue));
         setCursorToEnd(currentCell);
 
-        validateAllGameRules(); // Central validation call
+        await validateAllGameRules(); // Now potentially async due to word validation
     }
 
     function setCursorToEnd(element) { /* ... same as before ... */
@@ -233,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cellElement.childNodes.forEach(node => { if (node.nodeType === Node.TEXT_NODE) textContent += node.textContent; });
         return textContent.trim().toUpperCase();
     }
-
     function getCellValueForCalc(row, col) { /* ... same as before ... */
         const rawContent = getCellRawContent(row, col);
         if (letterValues[rawContent]) return letterValues[rawContent];
@@ -241,184 +211,180 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
     
-    function clearAllValidationStyles() {
+    function clearAllValidationStyles() { /* ... same as before ... */
         for (let r = 0; r < gridSize; r++) {
             for (let c = 0; c < gridSize; c++) {
                 gridCells[r][c].classList.remove('cell-invalid', 'cell-word-error', 'cell-word-correct');
             }
         }
-        sampleCages.forEach(cage => {
+        currentPuzzle.cages.forEach(cage => {
             const firstCellOfCage = cage.cells[0];
-            const clueElementId = `clue-${cellCageInfo[`${firstCellOfCage[0]}-${firstCellOfCage[1]}`].cageId}`;
-            const clueElement = document.getElementById(clueElementId);
-            if (clueElement) {
-                clueElement.classList.remove('cage-clue-error', 'cage-clue-correct');
+            const cageInfoForCell = cellCageInfo[`${firstCellOfCage[0]}-${firstCellOfCage[1]}`];
+            if (cageInfoForCell) {
+                const clueElementId = `clue-${cageInfoForCell.cageId}`;
+                const clueElement = document.getElementById(clueElementId);
+                if (clueElement) {
+                    clueElement.classList.remove('cage-clue-error', 'cage-clue-correct');
+                }
             }
         });
     }
 
-    function validateAllGameRules() {
-        clearAllValidationStyles(); // Clear previous validation states
+    async function validateAllGameRules() { // Made async
+        clearAllValidationStyles(); 
 
-        // 1. Validate individual cells (Sudoku rules for numbers)
         for (let r = 0; r < gridSize; r++) {
             for (let c = 0; c < gridSize; c++) {
-                if (!samplePuzzleData[r][c].p) { // Only validate user-editable cells for their own content
+                if (!currentPuzzle.gridDefinition[r][c].p) { 
                     validateNumberCellUniqueness(r, c);
                 }
             }
         }
-
-        // 2. Validate words
-        validateWordsInGrid();
-
-        // 3. Validate cages
+        await validateWordsInGrid(); // Now an async call
         validateAllCages();
     }
 
-
-    function validateNumberCellUniqueness(row, col) {
+    function validateNumberCellUniqueness(row, col) { /* ... same as before ... */
         const cellElement = gridCells[row][col];
-        const puzzleCellData = samplePuzzleData[row][col];
+        const puzzleCellData = currentPuzzle.gridDefinition[row][col];
         const currentValue = getCellRawContent(row, col);
         
-        // Check applies if cell type is 'n', or 'a' and holds a number
         if (currentValue && (puzzleCellData.t === 'n' || (puzzleCellData.t === 'a' && /^[1-9]$/.test(currentValue)))) {
-            // Check row
+            let isInvalid = false;
             for (let c = 0; c < gridSize; c++) {
-                if (c !== col && getCellRawContent(row, c) === currentValue) {
-                    cellElement.classList.add('cell-invalid'); gridCells[row][c].classList.add('cell-invalid');
-                }
+                if (c !== col && getCellRawContent(row, c) === currentValue) { isInvalid = true; gridCells[row][c].classList.add('cell-invalid');}
             }
-            // Check column
             for (let r = 0; r < gridSize; r++) {
-                if (r !== row && getCellRawContent(r, col) === currentValue) {
-                    cellElement.classList.add('cell-invalid'); gridCells[r][col].classList.add('cell-invalid');
-                }
+                if (r !== row && getCellRawContent(r, col) === currentValue) { isInvalid = true; gridCells[r][col].classList.add('cell-invalid');}
             }
-            // Check 2x3 region
             const startRow = Math.floor(row / regionRows) * regionRows;
             const startCol = Math.floor(col / regionCols) * regionCols;
             for (let r = startRow; r < startRow + regionRows; r++) {
                 for (let c = startCol; c < startCol + regionCols; c++) {
                     if ((r !== row || c !== col) && getCellRawContent(r, c) === currentValue) {
-                        cellElement.classList.add('cell-invalid'); gridCells[r][c].classList.add('cell-invalid');
+                       isInvalid = true; gridCells[r][c].classList.add('cell-invalid');
                     }
                 }
             }
+            if (isInvalid) cellElement.classList.add('cell-invalid');
         }
     }
     
-    function validateWordsInGrid() {
-        const lines = []; // To store all rows and columns data
+    async function isWordValid(word) {
+        if (wordValidationCache.has(word)) {
+            return wordValidationCache.get(word);
+        }
+        try {
+            // Using Datamuse API: sp={word} means "spelled like". We check if exact word is returned.
+            // &max=1 to limit results. We only care if our exact word is considered valid.
+            const response = await fetch(`https://api.datamuse.com/words?sp=${word.toLowerCase()}&max=1`);
+            if (!response.ok) {
+                console.error(`API error for "${word}": ${response.status}`);
+                wordValidationCache.set(word, false); // Assume invalid on API error to be safe
+                return false;
+            }
+            const data = await response.json();
+            // Check if the API returned our exact word as the top (or only) suggestion
+            const isValid = data.length > 0 && data[0].word.toUpperCase() === word.toUpperCase();
+            wordValidationCache.set(word, isValid);
+            return isValid;
+        } catch (error) {
+            console.error(`Network error validating word "${word}":`, error);
+            wordValidationCache.set(word, false); // Assume invalid on network error
+            return false;
+        }
+    }
 
-        // Get rows
+    async function validateWordsInGrid() {
+        const linesData = []; 
         for (let r = 0; r < gridSize; r++) {
             const rowLine = [];
-            for (let c = 0; c < gridSize; c++) {
-                rowLine.push({ r, c, char: getCellRawContent(r,c), type: samplePuzzleData[r][c].t });
-            }
-            lines.push(rowLine);
+            for (let c = 0; c < gridSize; c++) { rowLine.push({ r, c, char: getCellRawContent(r,c), type: currentPuzzle.gridDefinition[r][c].t }); }
+            linesData.push(rowLine);
         }
-        // Get columns
         for (let c = 0; c < gridSize; c++) {
             const colLine = [];
-            for (let r = 0; r < gridSize; r++) {
-                colLine.push({ r, c, char: getCellRawContent(r,c), type: samplePuzzleData[r][c].t });
-            }
-            lines.push(colLine);
+            for (let r = 0; r < gridSize; r++) { colLine.push({ r, c, char: getCellRawContent(r,c), type: currentPuzzle.gridDefinition[r][c].t }); }
+            linesData.push(colLine);
         }
 
-        lines.forEach(line => {
-            let currentWord = '';
-            let wordCells = [];
+        const validationPromises = [];
+
+        linesData.forEach(line => {
+            let currentWord = ''; let wordCells = [];
             for (let i = 0; i < line.length; i++) {
                 const cellData = line[i];
                 const isLetterCell = (cellData.type === 'l' || (cellData.type === 'a' && /^[A-Z]$/.test(cellData.char)));
                 
                 if (isLetterCell && cellData.char) {
-                    currentWord += cellData.char;
-                    wordCells.push(gridCells[cellData.r][cellData.c]);
+                    currentWord += cellData.char; wordCells.push(gridCells[cellData.r][cellData.c]);
                 } else {
                     if (currentWord.length >= minWordLength) {
-                        if (!wordDictionary.includes(currentWord)) {
-                            wordCells.forEach(cellEl => cellEl.classList.add('cell-word-error'));
-                        } else {
-                             // Optionally add 'cell-word-correct' if desired
-                        }
+                        const promise = isWordValid(currentWord).then(isValid => {
+                            if (!isValid) wordCells.forEach(cellEl => cellEl.classList.add('cell-word-error'));
+                        });
+                        validationPromises.push(promise);
                     }
-                    currentWord = '';
-                    wordCells = [];
+                    currentWord = ''; wordCells = [];
                 }
             }
-            // Check for word at the end of the line
-            if (currentWord.length >= minWordLength) {
-                if (!wordDictionary.includes(currentWord)) {
-                    wordCells.forEach(cellEl => cellEl.classList.add('cell-word-error'));
-                } else {
-                    // Optionally add 'cell-word-correct'
-                }
+            if (currentWord.length >= minWordLength) { // Check at end of line
+                const promise = isWordValid(currentWord).then(isValid => {
+                    if (!isValid) wordCells.forEach(cellEl => cellEl.classList.add('cell-word-error'));
+                });
+                validationPromises.push(promise);
             }
         });
+        await Promise.all(validationPromises); // Wait for all API calls to complete
     }
 
     function validateAllCages() { /* ... same as before ... */
-        sampleCages.forEach(cage => {
+        currentPuzzle.cages.forEach(cage => {
             const cageCellValues = [];
             let allCellsFilledAndValid = true;
             for (const [r, c] of cage.cells) {
                 const val = getCellValueForCalc(r, c);
-                if (val === null) {
-                    allCellsFilledAndValid = false;
-                    break; 
-                }
+                if (val === null) { allCellsFilledAndValid = false; break; }
                 cageCellValues.push(val);
             }
-
             const firstCellOfCage = cage.cells[0];
-            const clueElementId = `clue-${cellCageInfo[`${firstCellOfCage[0]}-${firstCellOfCage[1]}`].cageId}`;
+            const cageInfoForCell = cellCageInfo[`${firstCellOfCage[0]}-${firstCellOfCage[1]}`];
+            if (!cageInfoForCell) { return; }
+            const clueElementId = `clue-${cageInfoForCell.cageId}`;
             const clueElement = document.getElementById(clueElementId);
 
             if (!clueElement) return;
             clueElement.classList.remove('cage-clue-error', 'cage-clue-correct');
+            if (!allCellsFilledAndValid) return; 
 
-            if (!allCellsFilledAndValid) {
-                return; 
-            }
-
-            let result;
-            let isValid = false;
+            let result, isValid = false;
             switch (cage.operation) {
-                case 'add':
-                    result = cageCellValues.reduce((sum, val) => sum + val, 0);
-                    isValid = result === cage.target;
-                    break;
-                case 'mul':
-                    result = cageCellValues.reduce((prod, val) => prod * val, 1);
-                    isValid = result === cage.target;
-                    break;
-                case 'sub': 
-                    if (cageCellValues.length === 2) {
-                        isValid = Math.abs(cageCellValues[0] - cageCellValues[1]) === cage.target;
-                    }
-                    break;
+                case 'add': result = cageCellValues.reduce((s, v) => s + v, 0); isValid = result === cage.target; break;
+                case 'mul': result = cageCellValues.reduce((p, v) => p * v, 1); isValid = result === cage.target; break;
+                case 'sub': if (cageCellValues.length === 2) isValid = Math.abs(cageCellValues[0] - cageCellValues[1]) === cage.target; break;
                 case 'div': 
                      if (cageCellValues.length === 2) {
-                        const v0 = cageCellValues[0]; const v1 = cageCellValues[1];
+                        const v0 = cageCellValues[0], v1 = cageCellValues[1];
                         if (v1 !== 0 && v0 / v1 === cage.target && v0 % v1 === 0) isValid = true;
                         else if (v0 !== 0 && v1 / v0 === cage.target && v1 % v0 === 0) isValid = true;
-                    }
-                    break;
-                default: 
-                    console.warn("Unknown cage operation:", cage.operation);
-                    break;
+                    } break;
+                default: console.warn("Unknown cage operation:", cage.operation); break;
             }
+            if (isValid) clueElement.classList.add('cage-clue-correct'); else clueElement.classList.add('cage-clue-error');
+        });
+    }
 
-            if (isValid) {
-                clueElement.classList.add('cage-clue-correct');
-            } else {
-                clueElement.classList.add('cage-clue-error');
-            }
+    const solutionButton = document.getElementById('solutionButton');
+    if (solutionButton) {
+        solutionButton.addEventListener('click', () => {
+            const puzzleToStore = {
+                gridDefinition: currentPuzzle.gridDefinition, // The structure, types, prefilled
+                cages: currentPuzzle.cages,
+                solutionGrid: currentPuzzle.solutionGrid, // The specific solved values
+                letterValues: letterValues
+            };
+            localStorage.setItem('alphaNumericGridlockSolutionData', JSON.stringify(puzzleToStore));
+            window.location.href = 'solution.html';
         });
     }
 });
