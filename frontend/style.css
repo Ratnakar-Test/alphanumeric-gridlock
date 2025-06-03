@@ -1,1 +1,36 @@
-/* Main styles for AlphaNumeric Gridlock */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    background-color: #f0f0f0;
+}
+
+#game-grid-container {
+    margin-top: 20px;
+    /* Future: Could add controls or info display around the grid here */
+}
+
+#game-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 50px); /* 6 columns, each 50px wide */
+    grid-template-rows: repeat(6, 50px);    /* 6 rows, each 50px high */
+    border: 2px solid #333; /* Border around the whole grid */
+    gap: 1px; /* A small gap between cells, makes them distinct */
+    background-color: #bbb; /* Color for the gaps */
+}
+
+/* Styles for the individual cells (which we will create with JavaScript later) */
+.grid-cell {
+    width: 50px;
+    height: 50px;
+    background-color: #fff; /* White background for cells */
+    border: 1px solid #ccc; /* Light border for each cell */
+    box-sizing: border-box; /* Ensures padding/border don't increase total size */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px; /* For numbers/letters inside cells */
+    font-weight: bold;
+}
