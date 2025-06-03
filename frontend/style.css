@@ -1,54 +1,55 @@
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px;
-    background-color: #f0f0f0;
-}
+/* style.css - Custom styles to complement daisyUI */
 
-#game-grid-container {
-    margin-top: 20px;
-}
+/*
+  The main page layout, typography, and basic component styles
+  are now primarily handled by daisyUI and Tailwind utility classes in index.html.
+  This file will contain styles for the game grid structure, cage clues,
+  and specific validation feedback that needs to be layered on top or isn't
+  covered by simple utility classes.
+*/
 
 #game-grid {
     display: grid;
     grid-template-columns: repeat(6, 50px); /* 6 columns, each 50px wide */
     grid-template-rows: repeat(6, 50px);    /* 6 rows, each 50px high */
-    /* The main border is removed here, cages will define borders */
-    /* border: 2px solid #333;  */
-    /* gap: 1px; */ /* Gap removed, borders will define separation */
-    /* background-color: #bbb; */
-    position: relative; /* For absolute positioning of clues if needed */
+    position: relative; /* For absolute positioning of clues */
+    /* Cage borders will be applied dynamically by JS.
+       The background of the grid container or body will show through any gaps. */
 }
 
 .grid-cell {
     width: 50px;
     height: 50px;
-    background-color: #fff;
-    /* Default thin border, will be overridden by cage borders */
-    border: 1px solid #eee; /* Very light border for non-cage lines */
+    /* background-color: hsl(var(--b1)); */ /* Cell background from daisyUI theme (base-100) */
+    /* Default border for cells NOT part of a cage's outer edge, or for inner cage lines */
+    border: 1px solid hsl(var(--b2, #eeeeee)); /* daisyUI border color, with a fallback */
     box-sizing: border-box;
     display: flex;
-    /* justify-content: center; */ /* Changed for clue positioning */
-    /* align-items: center; */    /* Changed for clue positioning */
+    justify-content: center;
+    align-items: center;
     font-size: 20px;
     font-weight: bold;
-    color: #333;
+    /* color: hsl(var(--bc)); */ /* Text color from daisyUI theme (base-content) */
     position: relative; /* Each cell is a positioning context for its clue */
     padding: 2px; /* Small padding for content */
+    /* Using daisyUI variables for background and text color by default */
+    background-color: hsl(var(--b1));
+    color: hsl(var(--bc));
 }
 
-.grid-cell:focus {
-    outline: 2px solid dodgerblue;
-    background-color: #e6f3ff;
-    box-shadow: 0 0 5px rgba(0, 116, 217, 0.5);
+/* Focus style for editable cells - using daisyUI primary color for outline */
+.grid-cell[contentEditable="true"]:focus {
+    outline: 2px solid hsl(var(--p)); /* --p is primary color in daisyUI */
+    outline-offset: 0px; /* Adjust if needed */
+    /* background-color: hsl(var(--b2)); /* Slightly different background on focus */
     z-index: 10; /* Ensure focused cell content is on top */
+    /* DaisyUI often applies focus rings using box-shadow, you can customize further if needed */
+    box-shadow: 0 0 0 3px hsl(var(--p)/.2); /* Example focus ring using primary color with opacity */
 }
 
 .prefilled-cell {
-    background-color: #e9e9e9;
-    color: #000;
+    background-color: hsl(var(--b2, #e9e9e9)); /* daisyUI base-200 or a muted color */
+    color: hsl(var(--bc)); /* Ensure text is readable */
     font-weight: bold;
 }
 
@@ -60,26 +61,43 @@ body {
     position: absolute;
     top: 1px;
     left: 2px;
-    font-size: 10px; /* Smaller font for the clue */
-    font-weight: normal; /* Normal weight for clue */
-    color: #555;
+    font-size: 10px;
+    font-weight: normal;
+    color: hsl(var(--bc), 0.7); /* Base content color with some opacity or a muted gray */
     line-height: 1;
     z-index: 1; /* Clue is behind main content if cell is filled */
+    /* User-select none to prevent clue text from being accidentally selected */
+    user-select: none;
 }
 
-/* The main value of the cell (number/letter) */
-/* We will rely on the text node itself, positioned by flexbox on cell if needed */
-/* Text content of cell (value) should appear normally. Clue is absolutely positioned. */
-/* Adjust display flex for cell if value needs centering with clue present */
-.grid-cell {
-    /* Re-adding flex for centering main value if clue is present */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* Validation Styles using daisyUI theme colors */
+.cell-invalid {
+    /* DaisyUI error colors: --er for error background, --erc for error content (text) */
+    background-color: hsl(var(--er, #ffdddd)) !important;
+    color: hsl(var(--erc, #d8000c)) !important;
+    border-color: hsl(var(--er, #d8000c)) !important; /* Make border also indicate error */
 }
-.prefilled-cell .cage-clue { /* Ensure clue is visible with prefilled value */
-    z-index: 1;
+
+.cell-invalid:focus {
+    outline-color: hsl(var(--er, #d8000c));
+    box-shadow: 0 0 0 3px hsl(var(--er)/.2);
 }
-.prefilled-cell > *:not(.cage-clue) { /* Prefilled text node */
-    z-index: 0;
+
+.cage-clue-error {
+    color: hsl(var(--er, #d8000c)) !important; /* Error color for text */
+    font-weight: bold;
+}
+
+.cage-clue-correct {
+    color: hsl(var(--su, #2c9a2c)) !important; /* Success color for text */
+    font-weight: bold;
+}
+
+/* Optional: Visual distinction for cell types can also use themed colors */
+/* These are not applied by default in the JS yet, but classes are defined */
+.cell-type-number {
+    /* Example: no specific style or a very subtle one */
+}
+.cell-type-letter {
+    /* Example: no specific style or a very subtle one */
 }
