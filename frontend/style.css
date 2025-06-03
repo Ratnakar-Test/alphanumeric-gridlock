@@ -38,7 +38,7 @@
 /* Focus style for editable cells */
 .grid-cell[contentEditable="true"]:focus {
     outline: 2px solid hsl(var(--p, dodgerblue));
-    outline-offset: 0px;
+    outline-offset: 2px;
     /* Keep background distinct or consistent on focus */
     background-color: hsl(var(--b1)/0.95); /* Slightly adjust base-100 on focus */
     z-index: 10;
