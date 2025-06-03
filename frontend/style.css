@@ -32,7 +32,7 @@
        hsl(var(--bc)/0.2) means base content color at 20% opacity.
        Or a specific gray like #B0B0B0 or #A9A9A9 (DarkGray).
     */
-    border: 1px solid hsl(var(--bc)/0.25, #b0b0b0); /* BaseContent at 25% opacity, or medium-light gray */
+    border: 1px solid hsl(var(--bc)/0.25,#000000); /* BaseContent at 25% opacity, or medium-light gray */
 }
 
 /* Focus style for editable cells */
